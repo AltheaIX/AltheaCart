@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func DoAuth(ctx iris.Context) {
+func LoginHandler(ctx iris.Context) {
 	username := ctx.URLParam("username")
 	password := ctx.URLParam("password")
 	data, err := models.ValidateAuth(username, password)
@@ -26,4 +26,9 @@ func DoAuth(ctx iris.Context) {
 	}
 
 	ctx.JSON(verify)
+}
+
+func LogoutHandler(ctx iris.Context) {
+	ctx.RemoveCookie("token")
+	ctx.Redirect("/login", iris.StatusTemporaryRedirect)
 }

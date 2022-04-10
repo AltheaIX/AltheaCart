@@ -12,15 +12,18 @@ func Router() {
 	{
 		main.Use(controller.CheckAuth)
 		main.Get("/", controller.GetProductList)
+		main.Get("/carts", controller.CartHandler)
+		main.Get("/logout", controller.LogoutHandler)
 	}
 
 	api := app.Party("/api")
 	{
 		api.Use(iris.Compression)
-		api.Get("/login", controller.DoAuth)
-		api.Get("/check", controller.CheckAuth)
+		api.Post("/cart/add", controller.CheckAuth, controller.CartsAdd)
+		api.Post("/cart/remove", controller.CheckAuth, controller.CartsRemove)
+		api.Get("/login", controller.LoginHandler)
 		api.Get("/product", controller.GetProductList)
 		api.Get("/product/{id:int64}", controller.GetProduct)
 	}
-	app.Listen(":8005")
+	app.Listen(":8003")
 }

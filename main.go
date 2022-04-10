@@ -1,6 +1,8 @@
 package main
 
-import "AlthCart/router"
+import (
+	"AlthCart/router"
+)
 
 func main() {
 	router.Router()

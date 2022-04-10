@@ -57,6 +57,15 @@ func VerifyJWT(token string) (User, error) {
 	return data, nil
 }
 
+func UserIdJWT(token string) int64 {
+	data, err := VerifyJWT(token)
+	if err != nil {
+		fmt.Println(err.Error())
+		return 0
+	}
+	return data.Id
+}
+
 func TestValidateAuth() {
 	data, err := ValidateAuth("Malik", "Althea123")
 	if err != nil {
