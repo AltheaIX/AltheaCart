@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AlthCart - Home</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="assets/js/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="assets/css/uikit.min.css" />
+    <script src="assets/js/uikit.min.js"></script>
+    <script src="assets/js/uikit-icons.min.js"></script>
+    <script>
+        $(function () {
+            $('a.uk-button').on('click', function(){
+                $currentDiv = $(this).parent().parent()
+                $text = $currentDiv[0].innerText.split('\n')
+                $title = $text[0]
+                $.ajax({
+                    url: "/api/cart/add",
+                    method: "POST",
+                    data: {id: $(this).data("id")},
+                    success: function(){
+                        $count = $('span[data-usage="count"]')
+                        $countVal = parseInt($count[0].innerText)
+                        $count.text($countVal + 1)
+                        UIkit.notification(
+                            {
+                                message: "<span uk-icon=\'icon: check\; ratio: 1.35;'></span> Berhasil menambahkan produk " + $title + " ke keranjang!",
+                                pos: 'bottom-right',
+                                status: 'success'
+                            }
+                        )
+                    }
+                })
+            })
+        });
+    </script>
+</head>
+<body>
+<nav class="uk-navbar-container uk-margin" uk-navbar>
+    <div class="uk-navbar-left uk-margin-left">
+        <ul class="uk-navbar-nav">
+            <a class="uk-navbar-item uk-logo" href="#">AlthCart</a>
+        </ul>
+    </div>
+
+    <div class="uk-navbar-right uk-margin-right">
+        <ul class="uk-navbar-nav">
+            <li><a class="uk-visible@s" href="/cart"><span uk-icon="icon: cart; ratio: 1.5;"></span><span data-usage="count">{{.Data.CartCount}}</span></a></li>
+            <li><a class="uk-navbar-toggle uk-hidden@s" uk-navbar-toggle-icon uk-toggle="target: #slide-nav"></a></li>
+        </ul>
+    </div>
+</nav>
+
+<div id="slide-nav" uk-offcanvas="overlay: true">
+    <div class="uk-offcanvas-bar">
+
+        <ul class="uk-nav uk-nav-default">
+            <li class="uk-active uk-text-large"><a href="#">AlthCart</a></li>
+            <li class="uk-nav-divider"></li>
+            <li class="uk-nav-header">Actions</li>
+            <li><a href="/cart" data-usage="count"><span class="uk-margin-small-right" uk-icon="icon: cart"></span> <span data-usage="count">{{.Data.CartCount}}</span> Items on Cart</a></li>
+            <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: trash"></span> Logout</a></li>
+        </ul>
+
+    </div>
+</div>
+
+<div class="uk-margin-top uk-container uk-margin-bottom">
+    <div class="uk-child-width-1-2@m uk-grid-small" uk-grid>
+        {{range $elem := .Data.Products}}
+        <div>
+            <div class="uk-card uk-card-default uk-card-hover">
+                <div class="uk-card-media-top">
+                    <img class="uk-height-large" src="assets/img/{{$elem.Image}}" alt="">
+                </div>
+                <div class="uk-card-body">
+                    <h3 class="uk-card-title">{{$elem.Name}}</h3>
+                    <p>{{$elem.Description}}</p>
+                </div>
+                <div class="uk-card-footer">
+                    <a class="uk-button uk-button-text uk-align-right" data-id="{{$elem.Id}}">Buy Now</a>
+                </div>
+            </div>
+        </div>
+        {{end}}
+    </div>
+</div>
+
+</body>
+</html>

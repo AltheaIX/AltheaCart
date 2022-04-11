@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AlthCart - Home</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="assets/js/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="assets/css/uikit.min.css" />
+    <script src="assets/js/uikit.min.js"></script>
+    <script src="assets/js/uikit-icons.min.js"></script>
+    <script>
+        $(function () {
+            $('a.uk-button').on('click', function(){
+                $currentBtn = $(this)
+                $currentId = $currentBtn.data('id')
+                $currentAction = $currentBtn.data('action')
+                $quantity = $('span[data-usage="quantity"][data-id="'+$currentId+'"]')
+                $quantityVal = parseInt($quantity[0].innerText)
+                if($currentAction == "add") {
+                    $.ajax({
+                        url: "/api/add",
+                        method: "POST",
+                        data: {id: $(this).data("id")},
+                        success: function () {
+                            $count = $('span[data-usage="count"]')
+                            $countVal = parseInt($count[0].innerText)
+                            $count.text($countVal + 1)
+                            $quantity.text($quantityVal + 1)
+                        }
+                    })
+                }
+                if($currentAction == "remove"){
+                    if($quantityVal <= 1){
+                        $currentBtn.parent().parent().parent().hide()
+                    }
+                    $.ajax({
+                        url: "/api/remove",
+                        method: "POST",
+                        data: {id: $(this).data("id")},
+                        success: function () {
+                            $count = $('span[data-usage="count"]')
+                            $countVal = parseInt($count[0].innerText)
+                            $count.text($countVal - 1)
+                            $quantity.text($quantityVal - 1)
+                        }
+                    })
+                }
+            })
+        });
+    </script>
+</head>
+<body>
+<nav class="uk-navbar-container uk-margin" uk-navbar>
+    <div class="uk-navbar-left uk-margin-left">
+        <ul class="uk-navbar-nav">
+            <a class="uk-navbar-item uk-logo" href="#">AlthCart</a>
+        </ul>
+    </div>
+
+    <div class="uk-navbar-right uk-margin-right">
+        <ul class="uk-navbar-nav">
+            <li><a class="uk-visible@s"><span uk-icon="icon: cart; ratio: 1.5;"></span><span data-usage="count">{{.CartCount}}</span></a></li>
+            <li><a class="uk-navbar-toggle uk-hidden@s" uk-navbar-toggle-icon uk-toggle="target: #slide-nav"></a></li>
+        </ul>
+    </div>
+</nav>
+
+<div id="slide-nav" uk-offcanvas="overlay: true">
+    <div class="uk-offcanvas-bar">
+
+        <ul class="uk-nav uk-nav-default">
+            <li class="uk-active uk-text-large"><a href="#">AlthCart</a></li>
+            <li class="uk-nav-divider"></li>
+            <li class="uk-nav-header">Actions</li>
+            <li><a href="#" data-usage="count"><span class="uk-margin-small-right" uk-icon="icon: cart"></span> <span data-usage="count">{{.CartCount}}</span> Items on Cart</a></li>
+            <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: trash"></span> Logout</a></li>
+        </ul>
+
+    </div>
+</div>
+
+<div class="uk-margin-top uk-container uk-margin-bottom">
+    {{range $elem := .UserCart}}
+    <div class="uk-card uk-card-default uk-grid-collapse uk-child-width-1-3@s uk-margin" uk-grid>
+        <div class="uk-card-media-left uk-cover-container">
+            <img src="assets/img/{{$elem.Product.Image}}" alt="" uk-cover>
+            <canvas width="600" height="400"></canvas>
+        </div>
+        <div>
+            <div class="uk-card-body">
+                <h3 class="uk-card-title">{{$elem.Product.Name}}</h3>
+                <p><span data-usage="quantity" data-id="{{$elem.Product.Id}}">{{$elem.Quantity}}</span>x Items</p>
+                <a class="uk-button uk-button-text" data-id="{{$elem.Product.Id}}" data-action="remove"><span uk-icon="icon: minus; ratio: 1"></span></a>
+                <a class="uk-button uk-button-text" data-id="{{$elem.Product.Id}}" data-action="add"><span uk-icon="icon: plus; ratio: 1"></span></a>
+            </div>
+        </div>
+    </div>
+    {{end}}
+</div>
+</body>
+</html>

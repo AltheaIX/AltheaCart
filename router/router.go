@@ -8,10 +8,15 @@ import (
 func Router() {
 	app := iris.New()
 
+	app.HandleDir("/assets", iris.Dir("./controller/assets"))
+	tmpl := iris.HTML("./controller/templates", ".html")
+	tmpl.Reload(true)
+
 	main := app.Party("/")
 	{
+		main.RegisterView(tmpl)
 		main.Use(controller.CheckAuth)
-		main.Get("/", controller.GetProductList)
+		main.Get("/", controller.IndexHandler)
 		main.Get("/carts", controller.CartHandler)
 		main.Get("/logout", controller.LogoutHandler)
 	}

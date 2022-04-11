@@ -42,6 +42,18 @@ func GetUserCart(id int64) ([]Carts, error) {
 	return data, nil
 }
 
+func GetUserQuantityCart(uId int64) (int64, error) {
+	db := config.OpenConn()
+	defer db.Close()
+	var total int64
+
+	err := db.Get(&total, "SELECT sum(quantity) FROM users_cart where user_id=$1", uId)
+	if err != nil {
+		return 0, err
+	}
+	return total, nil
+}
+
 func AddCarts(id int64, uId int64) error {
 	db := config.OpenConn()
 	defer db.Close()
@@ -67,7 +79,7 @@ func AddCarts(id int64, uId int64) error {
 		return err
 	}
 
-	_, err = stmt.Queryx(id, uId)
+	_, err = stmt.Queryx(uId, id)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
@@ -117,12 +129,20 @@ func RemoveCarts(id int64, uId int64) error {
 	return nil
 }
 
+func TestGetUserQuantityCart() {
+	total, err := GetUserQuantityCart(1)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println(total)
+}
+
 func TestRemoveCarts() {
 	RemoveCarts(2, 1)
 }
 
 func TestAddCarts() {
-	AddCarts(1, 1)
+	AddCarts(2, 1)
 }
 
 func TestGetUserCart() {
