@@ -7,10 +7,10 @@ import (
 )
 
 type Carts struct {
-	Id       int64 `json:"id"`
+	Id       int64 `json:"id" db:"id"`
 	Product  Products
 	UserId   int64 `json:"userId" db:"user_id"`
-	Quantity int64 `json:"quantity"`
+	Quantity int64 `json:"quantity" db:"quantity"`
 }
 
 func GetUserCart(id int64) ([]Carts, error) {
@@ -18,7 +18,7 @@ func GetUserCart(id int64) ([]Carts, error) {
 	defer db.Close()
 
 	data := []Carts{}
-	stmt, err := db.Preparex("SELECT * FROM users_cart WHERE user_id=$1")
+	stmt, err := db.Preparex("SELECT * FROM users_cart WHERE user_id=$1 ORDER BY product_id ASC")
 	if err != nil {
 		panic(err)
 	}
@@ -52,6 +52,20 @@ func GetUserQuantityCart(uId int64) (int64, error) {
 		return 0, err
 	}
 	return total, nil
+}
+
+func GetUserTotal(Carts []Carts) int64 {
+	var total int64
+	for _, cart := range Carts {
+		total = total + (cart.Product.Price * cart.Quantity)
+	}
+	return total
+}
+
+func TestGetUserTotal() {
+	dataCart, _ := GetUserCart(1)
+	total := GetUserTotal(dataCart)
+	fmt.Println(total)
 }
 
 func AddCarts(id int64, uId int64) error {
@@ -92,28 +106,28 @@ func RemoveCarts(id int64, uId int64) error {
 	defer db.Close()
 
 	var quantity int
-	stmt, err := db.Preparex("SELECT quantity FROM users_cart WHERE id=$1 AND user_id=$2")
+	stmt, err := db.Preparex("SELECT quantity FROM users_cart WHERE user_id=$1 AND product_id=$2")
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(err.Error() + "1")
 		return err
 	}
 
-	err = stmt.Get(&quantity, id, uId)
+	err = stmt.Get(&quantity, uId, id)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(err.Error() + "2")
 		return err
 	}
 
 	if quantity > 1 {
 		stmt, err := db.Preparex("UPDATE users_cart SET quantity=quantity - 1 WHERE user_id=$1 AND product_id=$2")
 		if err != nil {
-			fmt.Println(err.Error())
+			fmt.Println(err.Error() + "3")
 			return err
 		}
 
 		_, err = stmt.Queryx(uId, id)
 		if err != nil {
-			fmt.Println(err.Error())
+			fmt.Println(err.Error() + "4")
 			return err
 		}
 		return nil

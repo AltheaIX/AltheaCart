@@ -5,15 +5,31 @@ import (
 	"github.com/kataras/iris/v12"
 )
 
+type CartData struct {
+	Carts      []models.Carts
+	CartCount  int64
+	TotalPrice int64
+}
+
 func CartHandler(ctx iris.Context) {
-	token := ctx.GetCookie("token")
-	uId := models.UserIdJWT(token)
+	uId := models.UserIdJWT(ctx.GetCookie("token"))
 	userCart, err := models.GetUserCart(uId)
 	if err != nil {
 		ctx.StopWithError(iris.StatusInternalServerError, iris.NewProblem().Title("Error when trying to get user's cart.").DetailErr(err))
 		return
 	}
-	ctx.JSON(userCart)
+
+	quantityCart, err := models.GetUserQuantityCart(uId)
+	if err != nil {
+		quantityCart = 0
+	}
+
+	totalCart := models.GetUserTotal(userCart)
+
+	cartData := CartData{Carts: userCart, CartCount: quantityCart, TotalPrice: totalCart}
+
+	ctx.ViewData("Data", cartData)
+	ctx.View("cart.html")
 }
 
 func CartsAdd(ctx iris.Context) {
@@ -45,7 +61,7 @@ func CartsRemove(ctx iris.Context) {
 
 	err = models.RemoveCarts(id, uId)
 	if err != nil {
-		ctx.StopWithProblem(iris.StatusInternalServerError, iris.NewProblem().Title("Error when trying to add carts").DetailErr(err))
+		ctx.StopWithProblem(iris.StatusInternalServerError, iris.NewProblem().Title("Error when trying to remove carts").DetailErr(err))
 		return
 	}
 	ctx.JSON(map[string]interface{}{

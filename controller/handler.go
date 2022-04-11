@@ -19,11 +19,15 @@ func IndexHandler(ctx iris.Context) {
 	}
 
 	totalCart, err := models.GetUserQuantityCart(uId)
-	IndexData := IndexData{Products: dataProduct, CartCount: totalCart}
 	if err != nil {
-		ctx.StopWithProblem(iris.StatusInternalServerError, iris.NewProblem().Title("Error when trying to get Total Quantity Cart").DetailErr(err))
-		return
+		totalCart = 0
 	}
+
+	IndexData := IndexData{Products: dataProduct, CartCount: totalCart}
 	ctx.ViewData("Data", IndexData)
 	ctx.View("index.html")
+}
+
+func LoginHandler(ctx iris.Context) {
+	ctx.View("login.html")
 }

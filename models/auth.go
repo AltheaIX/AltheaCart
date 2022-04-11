@@ -46,12 +46,10 @@ func VerifyJWT(token string) (User, error) {
 	verifiedToken, err := jwt.Verify(jwt.HS256, JWTKey, []byte(token))
 	data := User{}
 	if err != nil {
-		fmt.Println(err.Error())
 		return data, err
 	}
 	err = json.Unmarshal(verifiedToken.Payload, &data)
 	if err != nil {
-		fmt.Println(err.Error())
 		return data, err
 	}
 	return data, nil

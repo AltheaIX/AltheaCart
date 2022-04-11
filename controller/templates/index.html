@@ -45,7 +45,7 @@
 
     <div class="uk-navbar-right uk-margin-right">
         <ul class="uk-navbar-nav">
-            <li><a class="uk-visible@s" href="/cart"><span uk-icon="icon: cart; ratio: 1.5;"></span><span data-usage="count">{{.Data.CartCount}}</span></a></li>
+            <li><a class="uk-visible@s" href="/carts"><span uk-icon="icon: cart; ratio: 1.5;"></span><span data-usage="count">{{.Data.CartCount}}</span></a></li>
             <li><a class="uk-navbar-toggle uk-hidden@s" uk-navbar-toggle-icon uk-toggle="target: #slide-nav"></a></li>
         </ul>
     </div>
@@ -58,7 +58,7 @@
             <li class="uk-active uk-text-large"><a href="#">AlthCart</a></li>
             <li class="uk-nav-divider"></li>
             <li class="uk-nav-header">Actions</li>
-            <li><a href="/cart" data-usage="count"><span class="uk-margin-small-right" uk-icon="icon: cart"></span> <span data-usage="count">{{.Data.CartCount}}</span> Items on Cart</a></li>
+            <li><a href="/carts" data-usage="count"><span class="uk-margin-small-right" uk-icon="icon: cart"></span> <span data-usage="count">{{.Data.CartCount}}</span> Items on Cart</a></li>
             <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: trash"></span> Logout</a></li>
         </ul>
 
@@ -70,11 +70,13 @@
         {{range $elem := .Data.Products}}
         <div>
             <div class="uk-card uk-card-default uk-card-hover">
-                <div class="uk-card-media-top">
-                    <img class="uk-height-large" src="assets/img/{{$elem.Image}}" alt="">
+                <div class="uk-card-media-top uk-cover-container">
+                    <img src="assets/img/{{$elem.Image}}" alt="" uk-cover>
+                    <canvas width="600" height="400"></canvas>
                 </div>
                 <div class="uk-card-body">
                     <h3 class="uk-card-title">{{$elem.Name}}</h3>
+                    <p>Rp {{$elem.Price}}</p>
                     <p>{{$elem.Description}}</p>
                 </div>
                 <div class="uk-card-footer">

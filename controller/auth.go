@@ -7,9 +7,9 @@ import (
 	"time"
 )
 
-func LoginHandler(ctx iris.Context) {
-	username := ctx.URLParam("username")
-	password := ctx.URLParam("password")
+func AuthHandler(ctx iris.Context) {
+	username := ctx.PostValue("username")
+	password := ctx.PostValue("password")
 	data, err := models.ValidateAuth(username, password)
 	if err != nil {
 		if err == sql.ErrNoRows {

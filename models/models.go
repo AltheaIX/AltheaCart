@@ -6,10 +6,11 @@ import (
 )
 
 type Products struct {
-	Id          int64  `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Image       string `json:"image"`
+	Id          int64  `json:"id" db:"id"`
+	Name        string `json:"name" db:"name"`
+	Description string `json:"description" db:"description"`
+	Price       int64  `json:"price" db:"price"`
+	Image       string `json:"image" db:"image"`
 }
 
 func GetProducts() ([]Products, error) {

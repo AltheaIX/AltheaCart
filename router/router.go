@@ -14,7 +14,8 @@ func Router() {
 
 	main := app.Party("/")
 	{
-		main.RegisterView(tmpl)
+		app.RegisterView(tmpl)
+		app.Get("/login", controller.LoginHandler)
 		main.Use(controller.CheckAuth)
 		main.Get("/", controller.IndexHandler)
 		main.Get("/carts", controller.CartHandler)
@@ -26,7 +27,7 @@ func Router() {
 		api.Use(iris.Compression)
 		api.Post("/cart/add", controller.CheckAuth, controller.CartsAdd)
 		api.Post("/cart/remove", controller.CheckAuth, controller.CartsRemove)
-		api.Get("/login", controller.LoginHandler)
+		api.Post("/login", controller.AuthHandler)
 		api.Get("/product", controller.GetProductList)
 		api.Get("/product/{id:int64}", controller.GetProduct)
 	}
