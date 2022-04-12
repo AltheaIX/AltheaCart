@@ -11,10 +11,8 @@ func OpenConn() *sqlx.DB {
 		panic(err)
 	}
 
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
+	db.SetMaxOpenConns(0)
+	db.SetConnMaxLifetime(0)
 
 	return db
 }

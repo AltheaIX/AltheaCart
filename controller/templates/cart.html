@@ -9,6 +9,10 @@
     <script src="assets/js/uikit.min.js"></script>
     <script src="assets/js/uikit-icons.min.js"></script>
     <script>
+        function getTotal(callback){
+            return $.get("/api/cart/total", callback)
+        }
+
         $(function () {
             $('a.uk-button').on('click', function(){
                 $currentBtn = $(this)
@@ -19,7 +23,6 @@
                 $total = $('span[data-usage="total"]')
                 $quantityVal = parseInt($quantity[0].innerText)
                 $priceVal = parseInt($price[0].innerText)
-                $totalVal = parseInt($total[0].innerText)
                 if($currentAction == "add") {
                     $.ajax({
                         url: "/api/cart/add",
@@ -30,7 +33,9 @@
                             $countVal = parseInt($count[0].innerText)
                             $count.text($countVal + 1)
                             $quantity.text($quantityVal + 1)
-                            $total.text($totalVal + $priceVal)
+                            getTotal(function(e){
+                                $total.text(e.total)
+                            })
                         }
                     })
                 }
@@ -47,7 +52,9 @@
                             $countVal = parseInt($count[0].innerText)
                             $count.text($countVal - 1)
                             $quantity.text($quantityVal - 1)
-                            $total.text($totalVal - $priceVal)
+                            getTotal(function(e){
+                                $total.text(e.total)
+                            })
                         }
                     })
                 }

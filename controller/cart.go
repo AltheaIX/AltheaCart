@@ -32,6 +32,21 @@ func CartHandler(ctx iris.Context) {
 	ctx.View("cart.html")
 }
 
+func CartsTotal(ctx iris.Context) {
+	uId := models.UserIdJWT(ctx.GetCookie("token"))
+	userCart, err := models.GetUserCart(uId)
+	if err != nil {
+		ctx.StopWithError(iris.StatusInternalServerError, iris.NewProblem().Title("Error when trying to get userCart"))
+		return
+	}
+
+	totalCart := models.GetUserTotal(userCart)
+	ctx.JSON(map[string]interface{}{
+		"status": iris.StatusOK,
+		"total":  totalCart,
+	})
+}
+
 func CartsAdd(ctx iris.Context) {
 	uId := models.UserIdJWT(ctx.GetCookie("token"))
 	id, err := ctx.PostValueInt64("id")

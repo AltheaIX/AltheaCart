@@ -27,6 +27,7 @@ func Router() {
 		api.Use(iris.Compression)
 		api.Post("/cart/add", controller.CheckAuth, controller.CartsAdd)
 		api.Post("/cart/remove", controller.CheckAuth, controller.CartsRemove)
+		api.Get("/cart/total", controller.CheckAuth, controller.CartsTotal)
 		api.Post("/login", controller.AuthHandler)
 		api.Get("/product", controller.GetProductList)
 		api.Get("/product/{id:int64}", controller.GetProduct)

@@ -62,12 +62,6 @@ func GetUserTotal(Carts []Carts) int64 {
 	return total
 }
 
-func TestGetUserTotal() {
-	dataCart, _ := GetUserCart(1)
-	total := GetUserTotal(dataCart)
-	fmt.Println(total)
-}
-
 func AddCarts(id int64, uId int64) error {
 	db := config.OpenConn()
 	defer db.Close()
@@ -141,6 +135,12 @@ func RemoveCarts(id int64, uId int64) error {
 
 	stmt.Queryx(uId, id)
 	return nil
+}
+
+func TestGetUserTotal() {
+	dataCart, _ := GetUserCart(1)
+	total := GetUserTotal(dataCart)
+	fmt.Println(total)
 }
 
 func TestGetUserQuantityCart() {
